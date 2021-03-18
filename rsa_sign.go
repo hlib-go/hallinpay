@@ -60,7 +60,7 @@ func RsaVerify(conf *Config, bm map[string]string) (err error) {
 	shaBytes := hash.Sum(nil)
 	err = rsa.VerifyPKCS1v15(publicKey.(*rsa.PublicKey), crypto.SHA1, shaBytes, signBytes)
 	if err != nil {
-		err = errors.New("SIGN_ERROR " + err.Error())
+		err = errors.New("RsaVerify Error " + err.Error())
 		return
 	}
 	return

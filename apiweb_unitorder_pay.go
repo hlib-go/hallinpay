@@ -1,17 +1,12 @@
 package hallinpay
 
-import "errors"
-
-// 统一支付接口 , 注意：根据trxstatus判断状态
-func ApiwebUnitorderPay(conf *Config, p *PayParams) (result *PayResult, err error) {
+// 统一支付下单接口 , 注意：根据trxstatus判断状态
+func Pay(conf *Config, p *PayParams) (result *PayResult, err error) {
 	var bm = make(map[string]string)
 	bm["trxamt"] = p.Trxamt
 	bm["reqsn"] = p.Reqsn
 	bm["paytype"] = string(p.Paytype)
-	// 微信支付独有字段
-	if p.Paytype == PAY_TYPE_W06 || p.Paytype == PAY_TYPE_W02 {
-		bm["sub_appid"] = p.SubAppid
-	}
+	bm["sub_appid"] = p.SubAppid
 	bm["acct"] = p.Acct
 	bm["body"] = p.Body
 	bm["remark"] = p.Remark
@@ -19,10 +14,6 @@ func ApiwebUnitorderPay(conf *Config, p *PayParams) (result *PayResult, err erro
 
 	err = PostForm(conf, "/apiweb/unitorder/pay", bm, &result)
 	if err != nil {
-		return
-	}
-	if result.RetCode != RET_SUCCESS {
-		err = errors.New(string(result.RetCode) + ":" + result.RetMsg)
 		return
 	}
 	return
@@ -45,9 +36,6 @@ type PayParams struct {
 }
 
 type PayResult struct {
-	RetCode RetCode `json:"retcode"` //SUCCESS/FAIL
-	RetMsg  string  `json:"retmsg"`
-	//以下信息只有当retcode为SUCCESS时有返回
 	Trxid     string    `json:"trxid"`     //收银宝平台的交易流水号
 	Chnltrxid string    `json:"chnltrxid"` // 渠道平台交易单号 例如微信,支付宝平台的交易单号
 	Reqsn     string    `json:"reqsn"`

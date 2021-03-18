@@ -1,9 +1,7 @@
 package hallinpay
 
-import "errors"
-
 // 支持部分金额退款，隔天交易退款     注：含单品优惠交易只能整单退款，不支持部分退款
-func ApiwebUnitorderRefund(conf *Config, p *RefundParams) (result *RefundResult, err error) {
+func Refund(conf *Config, p *RefundParams) (result *RefundResult, err error) {
 	var bm = make(map[string]string)
 	bm["trxamt"] = p.Trxamt
 	bm["reqsn"] = p.Reqsn
@@ -14,10 +12,6 @@ func ApiwebUnitorderRefund(conf *Config, p *RefundParams) (result *RefundResult,
 
 	err = PostForm(conf, "/apiweb/unitorder/refund", bm, &result)
 	if err != nil {
-		return
-	}
-	if result.RetCode != RET_SUCCESS {
-		err = errors.New(string(result.RetCode) + ":" + result.RetMsg)
 		return
 	}
 	return
@@ -33,9 +27,6 @@ type RefundParams struct {
 }
 
 type RefundResult struct {
-	RetCode RetCode `json:"retcode"`
-	RetMsg  string  `json:"retmsg"`
-	//以下信息只有当retcode为SUCCESS时有返回
 	Trxid     string `json:"trxid"`     //收银宝平台的退款交易流水号
 	Reqsn     string `json:"reqsn"`     //商户的退款交易订单号
 	Trxcode   string `json:"trxcode"`   //交易类型
