@@ -1,16 +1,12 @@
 package hallinpay
 
+import "encoding/json"
+
 // 统一支付下单接口 , 注意：根据trxstatus判断状态
 func Pay(conf *Config, p *PayParams) (result *PayResult, err error) {
 	var bm = make(map[string]string)
-	bm["trxamt"] = p.Trxamt
-	bm["reqsn"] = p.Reqsn
-	bm["paytype"] = string(p.Paytype)
-	bm["sub_appid"] = p.SubAppid
-	bm["acct"] = p.Acct
-	bm["body"] = p.Body
-	bm["remark"] = p.Remark
-	bm["validtime"] = p.Validtime
+	bytes, _ := json.Marshal(p)
+	json.Unmarshal(bytes, &bm)
 
 	err = PostForm(conf, "/apiweb/unitorder/pay", bm, &result)
 	if err != nil {
