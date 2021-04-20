@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -28,12 +29,11 @@ func PostForm(conf *Config, path string, bm map[string]string, result interface{
 	defer func() {
 		plog.Info("allinpay 请求URL:" + reqUrl)
 		plog.Info("allinpay 请求报文:" + reqJson)
-		plog.WithField("ms", (time.Now().Nanosecond()-begTime)/1e6).Info("allinpay 响应报文:" + resJson)
+		plog.WithField("ms", strconv.Itoa((time.Now().Nanosecond()-begTime)/1e6)).Info("allinpay 响应报文:" + resJson)
 		if err != nil {
 			plog.Error("allinpay 请求异常:" + err.Error())
 			return
 		}
-
 	}()
 
 	if bm == nil {
