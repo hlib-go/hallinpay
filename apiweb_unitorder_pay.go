@@ -1,6 +1,9 @@
 package hallinpay
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"errors"
+)
 
 // 统一支付下单接口 , 注意：根据trxstatus判断状态
 func Pay(conf *Config, p *PayParams) (result *PayResult, err error) {
@@ -10,6 +13,10 @@ func Pay(conf *Config, p *PayParams) (result *PayResult, err error) {
 
 	err = PostForm(conf, "/apiweb/unitorder/pay", bm, &result)
 	if err != nil {
+		return
+	}
+	if result.Trxstatus != TRX_0000 {
+		err = errors.New(string(result.Trxstatus) + ":" + result.Errmsg)
 		return
 	}
 	return

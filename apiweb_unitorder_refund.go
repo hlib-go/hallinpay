@@ -1,5 +1,7 @@
 package hallinpay
 
+import "errors"
+
 // 支持部分金额退款，隔天交易退款     注：含单品优惠交易只能整单退款，不支持部分退款
 func Refund(conf *Config, p *RefundParams) (result *RefundResult, err error) {
 	var bm = make(map[string]string)
@@ -12,6 +14,10 @@ func Refund(conf *Config, p *RefundParams) (result *RefundResult, err error) {
 
 	err = PostForm(conf, "/apiweb/unitorder/refund", bm, &result)
 	if err != nil {
+		return
+	}
+	if result.Trxstatus != TRX_0000 {
+		err = errors.New(string(result.Trxstatus) + ":" + result.Errmsg)
 		return
 	}
 	return
@@ -27,11 +33,11 @@ type RefundParams struct {
 }
 
 type RefundResult struct {
-	Trxid     string `json:"trxid"`     //收银宝平台的退款交易流水号
-	Reqsn     string `json:"reqsn"`     //商户的退款交易订单号
-	Trxcode   string `json:"trxcode"`   //交易类型
-	Trxstatus string `json:"trxstatus"` //交易的状态
-	Errmsg    string `json:"errmsg"`    //失败的原因说明
-	Fintime   string `json:"fintime"`
-	Fee       int64  `json:"fee"` //手续费
+	Trxid     string    `json:"trxid"`     //收银宝平台的退款交易流水号
+	Reqsn     string    `json:"reqsn"`     //商户的退款交易订单号
+	Trxcode   string    `json:"trxcode"`   //交易类型
+	Trxstatus TrxStatus `json:"trxstatus"` //交易的状态
+	Errmsg    string    `json:"errmsg"`    //失败的原因说明
+	Fintime   string    `json:"fintime"`
+	Fee       int64     `json:"fee"` //手续费
 }
