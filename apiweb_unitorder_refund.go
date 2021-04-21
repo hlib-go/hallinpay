@@ -39,5 +39,5 @@ type RefundResult struct {
 	Trxstatus TrxStatus `json:"trxstatus"` //交易的状态
 	Errmsg    string    `json:"errmsg"`    //失败的原因说明
 	Fintime   string    `json:"fintime"`
-	Fee       int64     `json:"fee"` //手续费
+	Fee       string    `json:"fee"` //手续费
 }
